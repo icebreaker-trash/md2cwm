@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-const testsFolder = `${process.cwd()}/tests/mdStrings/`
+const testsFolder = path.resolve(__dirname, '../mdStrings')// `${process.cwd()}/tests/mdStrings/`
 
 const getTestStrings = (testName: string) => {
   const source = fs

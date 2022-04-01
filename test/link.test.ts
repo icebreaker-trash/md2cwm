@@ -18,7 +18,7 @@ describe('Link tests', () => {
     expect(
       convert('[text](url/)', {
         renderer: {
-          link: (href) => {
+          link: (href: string) => {
             return `http://example.com/${href}`
           }
         }

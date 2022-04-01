@@ -18,7 +18,7 @@ describe('Image tests', () => {
     expect(
       convert('![alt text](image.png)', {
         renderer: {
-          image: (href) => {
+          image: (href:string) => {
             return `http://example.com/${href}`
           }
         }
