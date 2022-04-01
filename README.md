@@ -4,14 +4,6 @@
 
 This tool converts [Markdown] to [Confluence Wiki Markup].
 
-## Overview
-
-Using [Markdown] is fast becoming a standard for open-source projects and their documentation. There are a few variants, such as [GitHub Flavored Markdown], which add additional features.
-
-Atlassian's Confluence has a different way of writing documentation, according to their [Confluence Wiki Markup] and [later pages][confluence-wiki-markup] and [references][wiki-render-help-action].
-
-This project contains a library and a command-line tool that bridges the gap and converts from Markdown to Confluence.
-
 ## Installation
 
 ```sh
@@ -27,26 +19,14 @@ npm i --save md2confluence
 Read in a Markdown file and write Confluence format to another file:
 
 ```sh
-md2confluence <path/to/markdown.md> <path/to/output.txt>
+md2c <path/to/markdown.md> <path/to/output.txt>
 ```
 
 Or output to standard output:
 
-    md2confluence README.md
+    md2c README.md
 
 ## As library dependency
-
-Or just edit your application `package.json` and add the following code to your `dependencies` object:
-
-    {
-        ...
-        "dependencies": {
-            ...
-            "md2confluence": "*"
-            ...
-        }
-        ...
-    }
 
 Now you write some JavaScript to load Markdown content and convert.
 

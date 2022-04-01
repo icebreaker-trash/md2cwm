@@ -1,7 +1,7 @@
 {
-  "name": "md2confluence",
+  "name": "md2cwm",
   "version": "1.0.0",
-  "description": "md2confluence",
+  "description": "markdown to Confluence Wiki Markup",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
@@ -28,7 +28,13 @@
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
-  "keywords": [],
+  "keywords": [
+    "Confluence",
+    "Wiki",
+    "Markup",
+    "markdown",
+    "md"
+  ],
   "author": "SonOfMagic <qq1324318532@gmail.com>",
   "license": "MIT",
   "bugs": {

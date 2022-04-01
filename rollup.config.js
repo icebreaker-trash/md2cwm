@@ -16,14 +16,14 @@ const config = {
       dir: 'dist',
       format: 'cjs',
       sourcemap: isDev,
-      exports: 'auto',
-      entryFileNames: '[name].js'
+      exports: 'auto'
     },
     {
       format: 'esm',
       dir: 'dist',
       sourcemap: isDev,
-      entryFileNames: '[name].es.js'
+      entryFileNames: '[name].es.js',
+      chunkFileNames: '[name]-[hash].es.js'
     }
   ],
 
@@ -34,7 +34,10 @@ const config = {
     commonjs(),
     typescript({ tsconfig: './tsconfig.build.json', sourceMap: isDev })
   ],
-  external: [...(pkg.dependencies ? Object.keys(pkg.dependencies) : [])]
+  external: [
+    ...(pkg.dependencies ? Object.keys(pkg.dependencies) : []),
+    'fs/promises'
+  ]
 }
 
 export default config
