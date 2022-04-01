@@ -1,6 +1,6 @@
 {
   "name": "md2cwm",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "markdown to Confluence Wiki Markup",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -15,14 +15,16 @@
     "clean": "node scripts/clean.js"
   },
   "bin": {
-    "md2c": "bin/md2c.js"
+    "md2c": "bin/md2c.js",
+    "md2cwm": "bin/md2c.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sonofmagic/md2confluence.git"
   },
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "publishConfig": {
     "access": "public",
