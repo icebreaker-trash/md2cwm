@@ -1,34 +1,52 @@
-// const md2conflu = require('../')
-// const fs = require('fs')
-// const path = require('path')
-// const assert = require('assert')
+import { markdown2confluence } from './util'
+import fs from 'fs/promises'
+import path from 'path'
 
-// let filename = process.argv[2]
-// const outputFileName = process.argv[3]
+async function main () {
+  let filename = process.argv[2]
+  const outputFileName = process.argv[3]
 
-// if (!filename) {
-//   filename = '/dev/stdin'
-// }
+  if (!filename) {
+    filename = '/dev/stdin'
+  }
+  try {
+    const buffer = await fs.readFile(path.resolve(process.cwd(), filename))
+    // We want to remove widdershins metadata
+    let commentEnd = buffer.indexOf('-->', 0)
 
-// fs.readFile(path.resolve(process.cwd(), filename), (err, buffer) => {
-//   assert(!err, 'read file ' + filename + ' error!')
+    commentEnd = commentEnd > 0 ? (commentEnd += 3) : 0
 
-//   // We want to remove widdershins metadata
-//   let commentEnd = buffer.indexOf('-->', 0)
+    // Generate the confluence wiki markup
+    const confluenceMarkup = markdown2confluence(
+      buffer.slice(commentEnd, buffer.length).toString()
+    )
 
-//   commentEnd = commentEnd > 0 ? (commentEnd += 3) : 0
+    if (outputFileName) {
+      await fs.writeFile(
+        path.resolve(process.cwd(), outputFileName),
+        confluenceMarkup,
+        {
+          encoding: 'utf-8'
+        }
+      )
+    } else {
+      const basename = path.basename(
+        outputFileName,
+        path.extname(outputFileName)
+      )
+      await fs.writeFile(
+        path.resolve(process.cwd(), basename + '.txt'),
+        confluenceMarkup,
+        {
+          encoding: 'utf-8'
+        }
+      )
+    }
 
-//   // Generate the confluence wiki markup
-//   const confluenceMarkup = md2conflu(buffer.slice(commentEnd, buffer.length))
+    return confluenceMarkup
+  } catch (error) {
+    throw new Error('read file ' + filename + ' error!')
+  }
+}
 
-//   if (outputFileName) {
-//     fs.writeFileSync(
-//       path.resolve(process.cwd(), outputFileName),
-//       confluenceMarkup
-//     )
-//   } else {
-//     console.log(confluenceMarkup)
-//   }
-
-//   return confluenceMarkup
-// })
+main()

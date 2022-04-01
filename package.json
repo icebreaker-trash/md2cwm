@@ -14,6 +14,9 @@
     "init:rename": "node scripts/init/rename.js",
     "clean": "node scripts/clean.js"
   },
+  "bin": {
+    "md2c": "bin/md2c.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sonofmagic/md2confluence.git"
