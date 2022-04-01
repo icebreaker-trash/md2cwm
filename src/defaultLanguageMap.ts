@@ -1,4 +1,4 @@
-export default {
+const map: Record<string, string> = {
   '': 'none',
   actionscript3: 'actionscript3',
   bash: 'bash',
@@ -26,3 +26,5 @@ export default {
   vb: 'vb',
   xml: 'xml'
 }
+
+export default map

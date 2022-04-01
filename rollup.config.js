@@ -13,12 +13,18 @@ const config = {
   input: { index: 'src/index.ts', cli: 'src/cli.ts' },
   output: [
     {
-      file: pkg.main,
+      dir: 'dist',
       format: 'cjs',
       sourcemap: isDev,
-      exports: 'auto'
+      exports: 'auto',
+      entryFileNames: '[name].js'
     },
-    { format: 'esm', file: pkg.module, sourcemap: isDev }
+    {
+      format: 'esm',
+      dir: 'dist',
+      sourcemap: isDev,
+      entryFileNames: '[name].es.js'
+    }
   ],
 
   plugins: [
