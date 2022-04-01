@@ -1,12 +1,8 @@
 import { marked } from 'marked'
 import { stringify } from 'qs'
 
-import {
-  getCodeBlockParams,
-  getDefaultLanguageMap,
-  getOptions
-} from './defaults'
-import type { UserDefinedOptions, CodeBlockOptions, LanguageMap } from './types'
+import { getCodeBlockParams, getDefaultLanguageMap } from './defaults'
+import type { UserDefinedOptions } from './types'
 // https://www.npmjs.com/package/markdown2confluence
 // https://github.com/Shogobg/markdown2confluence
 

@@ -1,6 +1,6 @@
 {
   "name": "md2cwm",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "markdown to Confluence Wiki Markup",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -12,7 +12,9 @@
     "dts": "ttsc --emitDeclarationOnly -p tsconfig.dts.json",
     "test": "jest",
     "init:rename": "node scripts/init/rename.js",
-    "clean": "node scripts/clean.js"
+    "clean": "node scripts/clean.js",
+    "raw": "node bin/md2c.js README.md",
+    "raw2": "node bin/md2c.js README.md README2.txt"
   },
   "bin": {
     "md2c": "bin/md2c.js",

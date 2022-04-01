@@ -31,8 +31,8 @@ async function main () {
       )
     } else {
       const basename = path.basename(
-        outputFileName,
-        path.extname(outputFileName)
+        filename,
+        path.extname(filename)
       )
       await fs.writeFile(
         path.resolve(process.cwd(), basename + '.txt'),
