@@ -1,4 +1,4 @@
-import type { marked } from 'marked'
+// import type { marked } from 'marked'
 
 export type LanguageMap = Record<string, string>
 
@@ -7,9 +7,10 @@ export type CodeBlockOptions = {
   get?: (lang: string) => Record<string, string | boolean>
 }
 
-export interface UserDefinedOptions extends marked.MarkedOptions {
+export interface UserDefinedOptions {
   codeBlock?: {
     languageMap?: LanguageMap
     options?: CodeBlockOptions
   }
+  renderer?: Record<string, Function>
 }

@@ -1,33 +1,51 @@
 import { marked } from 'marked'
 import { stringify } from 'qs'
 
-import { getOptions } from './defaults'
+import {
+  getCodeBlockParams,
+  getDefaultLanguageMap,
+  getOptions
+} from './defaults'
 import type { UserDefinedOptions, CodeBlockOptions, LanguageMap } from './types'
 // https://www.npmjs.com/package/markdown2confluence
 // https://github.com/Shogobg/markdown2confluence
 
-const rawRenderer = marked.Renderer
+const defaultLanguageMap = getDefaultLanguageMap()
 
-class Renderer extends rawRenderer {
-  public defaultLanguageMap: Required<LanguageMap>
-  public codeBlockParams: Required<CodeBlockOptions>
+const codeBlockParams = getCodeBlockParams()
 
-  constructor (options?: UserDefinedOptions) {
-    super(options)
-    const { codeBlock } = getOptions(options ?? {})
-    this.codeBlockParams = codeBlock.options
-    this.defaultLanguageMap = codeBlock.languageMap
-  }
-
-  text (text: string) {
+const defaultRenderer: marked.RendererObject = {
+  /**
+   * Simple text.
+   *
+   * @param {string} text
+   * @return {string}
+   */
+  text: function (text) {
     return text
-  }
-
-  paragraph (text: string) {
+  },
+  /**
+   * A paragraph of text.
+   *
+   * @param {string} text
+   * @return {string}
+   */
+  paragraph: function (text) {
     return `${text}\n\n`
-  }
-
-  html (text: string) {
+  },
+  /**
+   * Embedded HTML.
+   *
+   *   <h1>My text</h1>
+   *
+   * turns into
+   *
+   *   h1. My text
+   *
+   * @param {string} text
+   * @return {string}
+   */
+  html: function (text) {
     const regex =
       // eslint-disable-next-line no-useless-escape
       /<([\w]+)\s*[\w=]*"?([\/:\s\w=\-@\.\&\?\%]*)"?>([\/:\s\w.!?\\<>\-]*)(<\/\1>)?/gi
@@ -51,26 +69,96 @@ class Renderer extends rawRenderer {
     })
 
     return text
-  }
-
-  heading (text: string, level: number) {
+  },
+  /**
+   * Headings 1 through 6.
+   *
+   *   Heading 1
+   *   =========
+   *
+   *   # Heading 1 alternate
+   *
+   *   ###### Heading 6
+   *
+   * turns into
+   *
+   *   h1. Heading 1
+   *
+   *   h1. Heading 1 alternate
+   *
+   *   h6. Heading 6
+   *
+   * @param {string} text
+   * @param {number} level
+   * @return {string}
+   */
+  heading: function (text, level) {
     return `h${level}. ${text}\n\n`
-  }
-
-  strong (text: string) {
+  },
+  /**
+   * Creates strong text.
+   *
+   *   This is typically **bolded**.
+   *
+   * becomes
+   *
+   *   This is typically *bolded*.
+   *
+   * @param {string} text
+   * @return {string}
+   */
+  strong: function (text) {
     return `*${text}*`
-  }
-
-  em (text: string) {
+  },
+  /**
+   * Emphasis.
+   *
+   *   Typically this is *italicized* text.
+   *
+   * turns into
+   *
+   *   Typically this is _italicized_ text.
+   *
+   * @param {string} text
+   * @return {string}
+   */
+  em: function (text) {
     return `_${text}_`
-  }
-
-  del (text: string) {
+  },
+  /**
+   * Strikethrough.
+   *
+   *   Supported ~~everywhere~~ in GFM only.
+   *
+   * turns into
+   *
+   *   Supported -everywhere- in GFM only.
+   *
+   * @param {string} text
+   * @return {string}
+   */
+  del: function (text) {
     return `-${text}-`
-  }
-
-  codespan (text: string) {
-    const textArr = text.split(/(&[^;]*;)/).map((match, index) => {
+  },
+  /**
+   * Inline code.
+   *
+   *   Text that has statements, like `a = true` or similar.
+   *
+   * turns into
+   *
+   *   Text that has statements, like {{a = true}} or similar.
+   *
+   * Be wary. This converts wrong: "Look at `~/file1` or `~/file2`"
+   * Confluence thinks it is subscript and converts the markup into
+   * "Look at <code><sub>/file1</code> or <code></sub>/file2</code>".
+   * That's why some characters need to be escaped.
+   *
+   * @param {string} text
+   * @return {string}
+   */
+  codespan: function (text) {
+    const textArray = text.split(/(&[^;]*;)/).map((match, index) => {
       // These are the delimeters.
       if (index % 2) {
         return match
@@ -81,34 +169,97 @@ class Renderer extends rawRenderer {
       })
     })
 
-    return `{{${textArr.join('')}}}`
-  }
-
-  blockquote (text: string) {
+    return `{{${textArray.join('')}}}`
+  },
+  /**
+   * Blockquote.
+   *
+   *   > This is a blockquote.
+   *
+   * is changed into
+   *
+   *   {quote}
+   *   This is a blockquote.
+   *   {quote}
+   *
+   * @param {string} text
+   * @return {string}
+   */
+  blockquote: function (text) {
     return `{quote}\n${text.trim()}\n{quote}\n\n`
-  }
-
-  br () {
+  },
+  /**
+   * A line break.
+   * This is triggered by having a backslash at the end of a row
+   * Some text\
+   *
+   * @return {string}
+   */
+  br: function () {
     return '\n'
-  }
-
-  hr () {
+  },
+  /**
+   * Horizontal rule.
+   *
+   *   ---
+   *
+   * turns into
+   *
+   *   ----
+   *
+   * @return {string}
+   */
+  hr: function () {
     return '----\n\n'
-  }
-
-  link (href: string, title: string, text: string) {
+  },
+  /**
+   * Link to another resource.
+   *
+   *   [Home](/)
+   *   [Home](/ "some title")
+   *
+   * turns into
+   *
+   *   [Home|/]
+   *   [some title|/]
+   *
+   * @param {string} href
+   * @param {string} title
+   * @param {string} text
+   * @return {string}
+   */
+  link: function (href, title, text) {
     // Sadly, one must choose if the link's title should be displayed
     // or the linked text should be displayed. We picked the linked text.
-    text = text || title
+    text = (text || title) as string
 
     if (text) {
       text += '|'
     }
 
     return `[${text}${href}]`
-  }
-
-  list (text: string, ordered: boolean) {
+  },
+  /**
+   * Converts a list.
+   *
+   *     # ordered
+   *         * unordered
+   *
+   * becomes
+   *
+   *     # ordered
+   *     #* unordered
+   *
+   * Note: This adds an extra "\r" before the list in order to cope
+   * with nested lists better. When there's a "\r" in a nested list, it
+   * is translated into a "\n". When the "\r" is left in the converted
+   * result then it is removed.
+   *
+   * @param {string} text
+   * @param {boolean} ordered
+   * @return {string}
+   */
+  list: function (text, ordered) {
     text = text.trim()
 
     if (ordered) {
@@ -116,9 +267,15 @@ class Renderer extends rawRenderer {
     }
 
     return `\r${text}\n\n`
-  }
-
-  listitem (text: string) {
+  },
+  /**
+   * Changes a list item. Always marks it as an unordered list, but
+   * list() will change it back.
+   *
+   * @param {string} text
+   * @return {string}
+   */
+  listitem: function (text) {
     // If a list item has a nested list, it will have a "\r" in the
     // text. Turn that "\r" into "\n" but trim out other whitespace
     // from the list.
@@ -128,34 +285,64 @@ class Renderer extends rawRenderer {
     text = text.replace(/\n([*#])/g, '\n*$1')
 
     return `* ${text}\n`
-  }
-
-  image (href: string) {
+  },
+  /**
+   * An embedded image.
+   *
+   *   ![alt-text](image-url)
+   *
+   * is changed into
+   *
+   *   !image-url!
+   *
+   * Markdown supports alt text and titles. Confluence does not.
+   *
+   * @param {string} href
+   * @return {string}
+   */
+  image: function (href) {
     return `!${href}!`
-  }
-
-  table (header: string, body: string) {
+  },
+  /**
+   * Renders a table. Most of the work is done in tablecell.
+   *
+   * @param {string} header
+   * @param {string} body
+   * @return {string}
+   */
+  table: function (header, body) {
     return `${header}${body}\n`
-  }
+  },
+  /**
+   * Converts a table row. Most of the work is done in tablecell, however
+   * that can't tell if the cell is at the end of a row or not. Get the
+   * first cell's leading boundary and remove the double-boundary marks.
+   *
+   * @param {string} text
+   * @return {string}
+   */
+  tablerow: function (text) {
+    let boundary
 
-  tablerow (text: string) {
-    const boundary = text.match(/^\|*/)
-    let str: string
+    boundary = text.match(/^\|*/)
+
     if (boundary) {
-      str = boundary[0]
+      boundary = boundary[0]
     } else {
-      str = '|'
+      boundary = '|'
     }
 
-    return `${text}${str}\n`
-  }
-
-  tablecell (
-    text: string,
-    flags: {
-      header: boolean
-    }
-  ) {
+    return `${text}${boundary}\n`
+  },
+  /**
+   * Converts a table cell. When this is a header, the cell is prefixed
+   * with two bars instead of one.
+   *
+   * @param {string} text
+   * @param {Object} flags
+   * @return {string}
+   */
+  tablecell: function (text, flags) {
     let boundary
 
     if (flags.header) {
@@ -165,12 +352,28 @@ class Renderer extends rawRenderer {
     }
 
     return `${boundary}${text}`
-  }
+  },
+  /**
+   * Code block.
+   *
+   *   ```js
+   *   // JavaScript code
+   *   ```
+   *
+   * is changed into
+   *
+   *   {code:language=javascript|borderStyle=solid|theme=RDark|linenumbers=true|collapse=true}
+   *   // JavaScript code
+   *   {code}
+   *
+   * @param {string} text
+   * @param {string} lang
+   * @return {string}
+   */
+  code: function (text, lang) {
+    lang = defaultLanguageMap[(lang ?? '').toLowerCase()]
 
-  code (text: string, lang: string) {
-    lang = this.defaultLanguageMap[(lang ?? '').toLowerCase()]
-
-    const param = stringify(this.codeBlockParams.get(lang), {
+    const param = stringify(codeBlockParams.get(lang), {
       delimiter: '|'
     })
     return `{code:${param}}\n${text}\n{code}\n\n`
@@ -181,9 +384,41 @@ export function markdown2confluence (
   markdown: string,
   options?: UserDefinedOptions
 ) {
-  const defaultRenderer = new Renderer(options)
+  if (options) {
+    const { codeBlock, renderer } = options
+
+    if (codeBlock && codeBlock.languageMap) {
+      Object.entries(codeBlock.languageMap).forEach((option) => {
+        defaultLanguageMap[option[0]] = option[1]
+      })
+    }
+
+    if (codeBlock && codeBlock.options) {
+      Object.entries(codeBlock.options).forEach((option) => {
+        if (
+          // @ts-ignore
+          codeBlockParams.options[option[0]] &&
+          typeof option[1] !== 'function'
+        ) {
+          // @ts-ignore
+          codeBlockParams.options[option[0]] = option[1]
+        }
+      })
+    }
+
+    if (renderer) {
+      Object.entries(renderer).forEach((option) => {
+        // @ts-ignore
+        if (defaultRenderer[option[0]] && typeof option[1] === 'function') {
+          // @ts-ignore
+          defaultRenderer[option[0]] = option[1]
+        }
+      })
+    }
+  }
 
   marked.use({ renderer: defaultRenderer })
 
-  return marked.parse(markdown.toString())
+  const res = marked.parse(markdown.toString())
+  return res
 }
