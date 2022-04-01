@@ -1,32 +1,24 @@
 import { marked } from 'marked'
 import { stringify } from 'qs'
-// import filter from 'lodash/filter'
-// import map from 'lodash/map'
-// import trim from 'lodash/trim'
-import defaultLanguageMap from './defaultLanguageMap'
+
+import { getOptions } from './defaults'
+import type { UserDefinedOptions, CodeBlockOptions, LanguageMap } from './types'
 // https://www.npmjs.com/package/markdown2confluence
 // https://github.com/Shogobg/markdown2confluence
-const codeBlockParams = {
-  options: {
-    title: 'none',
-    language: 'none',
-    borderStyle: 'solid',
-    theme: 'RDark', // dark is good
-    linenumbers: true,
-    collapse: true
-  },
-
-  get (lang: string) {
-    const codeOptions = this.options
-    codeOptions.language = lang
-
-    return codeOptions
-  }
-}
 
 const rawRenderer = marked.Renderer
 
 class Renderer extends rawRenderer {
+  public defaultLanguageMap: Required<LanguageMap>
+  public codeBlockParams: Required<CodeBlockOptions>
+
+  constructor (options?: UserDefinedOptions) {
+    super(options)
+    const { codeBlock } = getOptions(options ?? {})
+    this.codeBlockParams = codeBlock.options
+    this.defaultLanguageMap = codeBlock.languageMap
+  }
+
   text (text: string) {
     return text
   }
@@ -37,6 +29,7 @@ class Renderer extends rawRenderer {
 
   html (text: string) {
     const regex =
+      // eslint-disable-next-line no-useless-escape
       /<([\w]+)\s*[\w=]*"?([\/:\s\w=\-@\.\&\?\%]*)"?>([\/:\s\w.!?\\<>\-]*)(<\/\1>)?/gi
 
     // We need special handling for anchors
@@ -175,16 +168,22 @@ class Renderer extends rawRenderer {
   }
 
   code (text: string, lang: string) {
-    lang = defaultLanguageMap[(lang ?? '').toLowerCase()]
+    lang = this.defaultLanguageMap[(lang ?? '').toLowerCase()]
 
-    const param = stringify(codeBlockParams.get(lang), {
+    const param = stringify(this.codeBlockParams.get(lang), {
       delimiter: '|'
     })
     return `{code:${param}}\n${text}\n{code}\n\n`
   }
 }
 
-export function markdown2confluence (markdown: string) {
-  const renderer = new Renderer()
-  return marked(markdown, { renderer: renderer })
+export function markdown2confluence (
+  markdown: string,
+  options?: UserDefinedOptions
+) {
+  const defaultRenderer = new Renderer(options)
+
+  marked.use({ renderer: defaultRenderer })
+
+  return marked.parse(markdown.toString())
 }

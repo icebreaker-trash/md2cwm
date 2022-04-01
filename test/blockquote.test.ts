@@ -1,5 +1,5 @@
-const convert = require('..')
-const getTestStrings = require('./utils/testStringLoader')
+import convert from '..'
+import getTestStrings from './utils/testStringLoader'
 
 describe('Blockquote tests', () => {
   it('converts a single line quote correctly', () => {

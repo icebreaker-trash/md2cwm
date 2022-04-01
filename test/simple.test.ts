@@ -1,5 +1,5 @@
-const convert = require('..')
-const getTestStrings = require('./utils/testStringLoader')
+import convert from '..'
+import getTestStrings from './utils/testStringLoader'
 
 describe('Simple tests', () => {
   it('Works with strings', () => {
@@ -7,7 +7,7 @@ describe('Simple tests', () => {
   })
 
   it('Works with Buffer', () => {
-    expect(convert(Buffer.from('abc', 'utf8'))).toBe('abc\n\n')
+    expect(convert(Buffer.from('abc', 'utf8').toString())).toBe('abc\n\n')
   })
 
   it('Converts strong and bold text', () => {

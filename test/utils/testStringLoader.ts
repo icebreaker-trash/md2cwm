@@ -1,9 +1,9 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
 
 const testsFolder = `${process.cwd()}/tests/mdStrings/`
 
-const getTestStrings = (testName) => {
+const getTestStrings = (testName: string) => {
   const source = fs
     .readFileSync(path.resolve(testsFolder, `${testName}.md`))
     .toString()
@@ -15,5 +15,4 @@ const getTestStrings = (testName) => {
   return { source, target }
 }
 
-module.exports = getTestStrings
 export default getTestStrings

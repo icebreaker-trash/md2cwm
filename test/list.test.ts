@@ -1,5 +1,5 @@
-const convert = require('..')
-const getTestStrings = require('./utils/testStringLoader')
+import convert from '..'
+import getTestStrings from './utils/testStringLoader'
 
 describe('List tests', () => {
   it('Converts an unordered, collapsed list', () => {

@@ -1,5 +1,5 @@
-const convert = require('..')
-const getTestStrings = require('./utils/testStringLoader')
+import convert from '..'
+import getTestStrings from './utils/testStringLoader'
 
 describe('Link tests', () => {
   it('Simple link', () => {
