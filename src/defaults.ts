@@ -2,18 +2,20 @@ import defu from 'defu'
 import type { UserDefinedOptions } from './types'
 export function getDefaultLanguageMap () {
   const defaultLanguageMap: Record<string, string> = {
-    '': 'none',
+    '': 'text',
     actionscript3: 'actionscript3',
     bash: 'bash',
     csharp: 'csharp',
     coldfusion: 'coldfusion',
     cpp: 'cpp',
     css: 'css',
+    scss: 'css',
     delphi: 'delphi',
     diff: 'diff',
     erlang: 'erlang',
     groovy: 'groovy',
-    html: 'html',
+    html: 'xml',
+    xml: 'xml',
     java: 'java',
     javafx: 'javafx',
     javascript: 'javascript',
@@ -27,7 +29,7 @@ export function getDefaultLanguageMap () {
     shell: 'bash',
     sql: 'sql',
     vb: 'vb',
-    xml: 'xml'
+    sh: 'bash'
   }
   return defaultLanguageMap
 }
@@ -40,7 +42,7 @@ export function getCodeBlockParams () {
       borderStyle: 'solid',
       theme: 'RDark', // dark is good
       linenumbers: true,
-      collapse: true
+      collapse: false // true
     },
 
     get (lang: string) {

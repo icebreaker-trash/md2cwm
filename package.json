@@ -1,6 +1,6 @@
 {
   "name": "md2cwm",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "markdown to Confluence Wiki Markup",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -67,8 +67,10 @@
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "6.0.0",
+    "fast-glob": "^3.2.11",
     "jest": "^27.5.1",
     "lodash": "^4.17.21",
+    "log-symbols": "^5.1.0",
     "qs": "^6.10.3",
     "rollup": "^2.70.0",
     "rollup-plugin-terser": "^7.0.2",

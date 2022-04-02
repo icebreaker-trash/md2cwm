@@ -10,21 +10,17 @@ This tool converts [Markdown] to [Confluence Wiki Markup].
 npm i -g md2confluence
 ```
 
-```sh
+```bash
 npm i --save md2confluence
 ```
 
 ## Command-Line Use
 
-Read in a Markdown file and write Confluence format to another file:
+Read in Markdown files and allow to use glob
 
-```sh
-md2c <path/to/markdown.md> <path/to/output.txt>
+```bash
+md2c *.md <path/to/docs>
 ```
-
-Or output to standard output:
-
-    md2c README.md
 
 ## As library dependency
 
