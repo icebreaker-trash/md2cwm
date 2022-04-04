@@ -1,4 +1,4 @@
-# md2confluence
+# md2cwm
 
 > This is a fork form [Shogobg/markdown2confluence](https://github.com/Shogobg/markdown2confluence), Thanks for `Shogobg` to provide such goof util and i wanna do some refactors with markdown ast utils.
 
@@ -7,11 +7,11 @@ This tool converts [Markdown] to [Confluence Wiki Markup].
 ## Installation
 
 ```sh
-npm i -g md2confluence
+npm i -g md2cwm
 ```
 
 ```bash
-npm i --save md2confluence
+npm i --save md2cwm
 ```
 
 ## Command-Line Use
@@ -20,6 +20,7 @@ Read in Markdown files and allow to use glob
 
 ```bash
 md2c *.md <path/to/docs>
+// md2cwm the same
 ```
 
 ## As library dependency
@@ -27,9 +28,9 @@ md2c *.md <path/to/docs>
 Now you write some JavaScript to load Markdown content and convert.
 
 ```javascript
-const md2confluence = require('md2confluence');
+const md2cwm = require('md2cwm');
 const markdown = fs.readFileSync('README.md');
-const confluence = md2confluence(markdown);
+const confluence = md2cwm(markdown);
 console.log(confluence);
 ```
 
@@ -41,9 +42,9 @@ Since this tool uses [marked](https://www.npmjs.com/package/marked), there is a 
 If you want to replace any of the predefined functions or the renderer as a whole, you can do so by passing an options object to the tool.
 
 ```javascript
-md2confluence = require('md2confluence');
+md2cwm = require('md2cwm');
 markdown = fs.readFileSync('README.md');
-confluence = md2confluence(markdown, {
+confluence = md2cwm(markdown, {
   renderer: {
     link: href => {
       return `http://example.com/${href}`;
@@ -56,9 +57,9 @@ console.log(confluence);
 Additionally, the options objects takes custom arguments for the confluence code block options.
 
 ```javascript
-md2confluence = require('md2confluence');
+md2cwm = require('md2cwm');
 markdown = fs.readFileSync('README.md');
-confluence = md2confluence(markdown, {
+confluence = md2cwm(markdown, {
   renderer: {
     link: href => {
       return `http://example.com/${href}`;

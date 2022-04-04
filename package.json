@@ -1,6 +1,6 @@
 {
   "name": "md2cwm",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "markdown to Confluence Wiki Markup",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sonofmagic/md2confluence.git"
+    "url": "git+https://github.com/sonofmagic/md2cwm.git"
   },
   "files": [
     "dist",
@@ -42,9 +42,9 @@
   "author": "SonOfMagic <qq1324318532@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sonofmagic/md2confluence/issues"
+    "url": "https://github.com/sonofmagic/md2cwm/issues"
   },
-  "homepage": "https://github.com/sonofmagic/md2confluence#readme",
+  "homepage": "https://github.com/sonofmagic/md2cwm#readme",
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.9",
     "@rollup/plugin-commonjs": "^21.0.2",
